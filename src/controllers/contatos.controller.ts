@@ -1,6 +1,6 @@
 import { Request,Response } from "express";
 import createContatoService from "../services/createContato.service";
-import { TContato, TContatoRequest, TContatoResponse } from "../interfaces/contato.interface";
+import { TContato, TContatoRequest, TContatoResponse, TContatoUpdateRequest } from "../interfaces/contato.interface";
 import updateContatoService from "../services/updateContato.service";
 import listContatoService from "../services/listContatos.service";
 import deleteContatoService from "../services/deleteContato.service";
@@ -8,42 +8,52 @@ import deleteContatoService from "../services/deleteContato.service";
 
 const createContatoController = async (req:Request, res:Response): Promise<Response> =>{
 
-    const contatoData:TContatoRequest = req.body
+    const userId: number = parseInt(res.locals.user.id)
+    
+    const contatoData: TContatoRequest = req.body
 
-    const newContato = await createContatoService(contatoData)
+    const contato: TContatoResponse = await createContatoService(userId, contatoData)
 
-    return res.status(201).json(newContato)
+    return res.status(201).json(contato)
 }
 
 
 
 const updateContatoController = async (req: Request, res: Response): Promise<Response> => {
-    
-    const contatoData:TContatoRequest = req.body
 
-    const contatoId:number = Number(req.params.id)
+    const userId: number = parseInt(res.locals.user.id)
 
-    const newContatoData:TContatoResponse = await updateContatoService(contatoData,contatoId)
+    const contatoId: number = parseInt(req.params.id)
 
-    return res.json(newContatoData)
+    const contatoData: TContatoUpdateRequest = req.body
+
+    const contact: TContatoResponse = await updateContatoService(contatoId, contatoData, userId)
+
+    return res.status(200).json(contact)
 }
 
 
-const listContatoController = async (req:Request,res:Response):Promise<Response> =>{
+const listContatoController = async (req: Request, res: Response): Promise<Response> => {
 
-    const listContato = await listContatoService()
+    const contatoId: number = parseInt(req.params.id)
 
-    return res.status(200).json(listContato)
+    const userId: number = parseInt(res.locals.user.id)
+
+    const contato: TContatoResponse = await listContatoService(contatoId, userId)
+
+    return res.status(200).json(contato)
 }
 
 
 const deleteContatoController = async (req: Request, res: Response): Promise<Response> => {
 
-    const contatoId: number = Number(req.params.id)
-  
-    await deleteContatoService(contatoId)
+    const userId: number = parseInt(res.locals.user.id)
 
-    return res.status(204).json()
+    const contatoId: number = parseInt(req.params.id)
+
+    await deleteContatoService(contatoId, userId)
+
+    return res.status(204).send()
 }
 
 export{createContatoController,updateContatoController,listContatoController,deleteContatoController}

@@ -18,13 +18,13 @@ const createLoginService = async(loginData:TLoginRequest):Promise<string> =>{
         }
     })
     if(!user){
-        throw new AppError("Invalid credentials",401)
+        throw new AppError("User not found", 401)
     }
 
     const passwordMatch = await compare(loginData.password,user.password)
 
     if(!passwordMatch){
-        throw new AppError("Invalid credentials",401)
+        throw new AppError("Invalid password",401)
     }
     
     const token = jwt.sign(

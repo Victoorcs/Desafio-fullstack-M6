@@ -3,14 +3,15 @@ import { createUsersController, deleteUserController, listUsersController, updat
 import ensureBodyIsValidMiddleware from "../middlewares/ensureBodyIsValid.middlewares";
 import { updateUserSchema, userSchemaRequest } from "../schemas/users.schema";
 import ensureTokenIsValidMiddleware from "../middlewares/ensureTokenIsValid.middlewares";
+import ensureEmailExistUserMiddleware from "../middlewares/ensureEmailExistsUser.middlewares";
 
 
 const userRoutes = Router()
 
 
-userRoutes.post('',ensureBodyIsValidMiddleware(userSchemaRequest),createUsersController )
+userRoutes.post('',ensureBodyIsValidMiddleware(userSchemaRequest),ensureEmailExistUserMiddleware,createUsersController )
 
-userRoutes.get('',ensureTokenIsValidMiddleware,listUsersController)
+userRoutes.get('',listUsersController)
 
 userRoutes.patch('/:id',ensureTokenIsValidMiddleware,ensureBodyIsValidMiddleware(updateUserSchema),updateUserController)
 

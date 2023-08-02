@@ -1,26 +1,36 @@
 import { DeepPartial, Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
 import { Contato } from "../entities/contatos.entitie";
-import { TContatoRequest, TContatoResponse } from "../interfaces/contato.interface";
+import { TContato, TContatoRequest, TContatoResponse, TContatoUpdateRequest } from "../interfaces/contato.interface";
 import { contatoSchemaResponse } from "../schemas/contato.shema";
+import { AppError } from "../errors/error";
 
-const updateContatoService = async (contatoData:TContatoRequest, contatoId:number):Promise<TContatoResponse> =>{
-    
-    const userRepository:Repository<Contato> = AppDataSource.getRepository(Contato)
+const updateContatoService = async (contatoId: number, contatoData: TContatoUpdateRequest, userId: number): Promise<TContato> => {
+    const contatoRepository: Repository<Contato> = AppDataSource.getRepository(Contato)
 
-    const oldContatoData:Contato | null =  await userRepository.findOneBy({
-        id:contatoId,
+    const contato: Contato | null = await contatoRepository.findOne({
+        where: {
+            id: contatoId
+        },
+        relations: ['user']
     })
 
-    const newContatoData:Contato = userRepository.create({
-        ...oldContatoData,
-        ...contatoData as DeepPartial<Contato>
+    if(!contato){
+        throw new AppError('Contact not found', 404)
+    }
+
+    if(contato.user.id !== userId){
+        throw new AppError('Insufficient permission', 401)
+    }
+
+    const contactUpdated = contatoRepository.create({
+        ...contato,
+        ...contatoData
     })
-    await userRepository.save(newContatoData)
 
-    const returnContato:TContatoResponse = contatoSchemaResponse.parse(newContatoData)
+    await contatoRepository.save(contactUpdated)
 
-    return returnContato
+    return contatoSchemaResponse.parse(contactUpdated)
 }
 
 export default updateContatoService

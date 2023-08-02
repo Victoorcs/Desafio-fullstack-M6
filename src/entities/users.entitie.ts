@@ -1,26 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn ,OneToMany} from "typeorm"
+import { Column, Entity, PrimaryGeneratedColumn ,OneToMany, CreateDateColumn} from "typeorm"
 import { Contato } from "./contatos.entitie"
 
 @Entity("users") 
 class User {
 
-    @PrimaryGeneratedColumn('increment')
-    id: number;
+    @PrimaryGeneratedColumn()
+    id:number
 
-    @Column()
-    name: string;
+    @Column({length:200})
+    name:string
 
-    @Column({ unique: true })
-    email: string;
+    @Column({length: 45,  unique: true })
+    email: string
 
-    @Column()
-    password: string;
+    @Column({length: 120})
+    password: string
 
-    @Column()
-    telefone: number;
+    @Column({length: 10 })
+    telefone: string
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    dataRegistro: Date;
+    @CreateDateColumn({type:"date"})
+    createdAt: string
 
     @OneToMany(() => Contato, contato => contato.user) 
     contatos: Contato[];

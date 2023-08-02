@@ -1,4 +1,4 @@
-import { hash } from "bcryptjs";
+
 import { AppDataSource } from "../data-source"; 
 import { User } from "../entities/users.entitie"; 
 import { TUserRequest,TUserResponse } from "../interfaces/users.interface";
@@ -8,17 +8,24 @@ import { Repository } from "typeorm";
 
 
 
-const createUserService = async (userData:TUserRequest):Promise <TUserResponse> =>{
+import bcrypt from 'bcryptjs';
 
-    const userRepository: Repository<User> = AppDataSource.getRepository(User)
+const createUserService = async (userData: TUserRequest): Promise<TUserResponse> => {
+  const userRepository: Repository<User> = AppDataSource.getRepository(User)
 
-    const user:User = userRepository.create(userData)
+  
+  const hashedPassword = await bcrypt.hash(userData.password, 10)
 
-    await userRepository.save(user)
+  const user: User = userRepository.create({
+    ...userData,
+    password: hashedPassword, 
+  })
 
-    const returnUser:TUserResponse = userSchemaResponse.parse(user)
+  await userRepository.save(user)
 
-    return returnUser
+  const returnUser: TUserResponse = userSchemaResponse.parse(user)
+
+  return returnUser
 }
 
-export default createUserService
+export default createUserService;

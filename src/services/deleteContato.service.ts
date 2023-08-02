@@ -5,19 +5,28 @@ import { AppError } from "../errors/error"
 
 
 
-const deleteContatoService = async (userId: number): Promise<void> => {
-    const contatoRepository: Repository<Contato> = AppDataSource.getRepository(Contato)
-  
-    const contatoToDelete: Contato | null = await contatoRepository.findOne({
-        where: {id:userId}
-        
-      })
-  
-    if (!contatoToDelete) {
-        throw new AppError('User not found',404)
-    }
-  
-    await contatoRepository.remove(contatoToDelete)
+
+
+const deleteContatoService = async (contatoId: number, userId: number): Promise<void> =>{
+  const contatoRepository: Repository<Contato> = AppDataSource.getRepository(Contato)
+
+  const contato: Contato | null = await contatoRepository.findOne({
+      where: {
+          id: contatoId
+      },
+      relations: ['user']
+  })
+
+  if(!contato){
+      throw new AppError('Contact not found', 404)
   }
-  
-  export default deleteContatoService
+
+  if(contato.user.id !== userId){
+      throw new AppError('Insufficient permission', 401)
+  }
+
+  await contatoRepository.remove(contato)
+}
+
+export default deleteContatoService
+

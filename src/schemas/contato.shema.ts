@@ -2,19 +2,19 @@ import { z } from 'zod'
 
 
 const contatoSchema = z.object({
-    id: z.number(),
-    name: z.string(),
-    email: z.string().email(),
-    telefone: z.number(),
-    dataRegistro: z.date().optional(),
-    user: z.number().int(), 
+  id: z.number(),
+  name: z.string().max(200),
+  email: z.string().email().max(45),
+  telefone: z.string().max(10),
+  createdAt: z.string()
   })
 
 const contatoSchemaRequest = contatoSchema.omit({
-    id: true
+    id: true,
+    createdAt: true,
 })
 
-const contatoSchemaResponse = z.array(contatoSchema)
+const contatoSchemaResponse = contatoSchema
 
 const updateContatoSchema = contatoSchemaRequest.partial()
 

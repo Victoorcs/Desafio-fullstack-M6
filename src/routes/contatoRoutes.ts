@@ -3,17 +3,18 @@ import { createContatoController, deleteContatoController, listContatoController
 import ensureBodyIsValidMiddleware from "../middlewares/ensureBodyIsValid.middlewares";
 import { contatoSchemaRequest, updateContatoSchema } from "../schemas/contato.shema";
 import ensureTokenIsValidMiddleware from "../middlewares/ensureTokenIsValid.middlewares";
+import ensureEmailExistContatoMiddleware from "../middlewares/ensureEmailExistsContato.middlewares";
 
 
 
 const contatoRoutes:Router = Router()
 
-contatoRoutes.post('',ensureBodyIsValidMiddleware(contatoSchemaRequest),createContatoController)
+contatoRoutes.post('',ensureBodyIsValidMiddleware(contatoSchemaRequest),ensureEmailExistContatoMiddleware,createContatoController)
 
-contatoRoutes.patch('/:id',ensureTokenIsValidMiddleware,ensureBodyIsValidMiddleware(updateContatoSchema),updateContatoController)
+contatoRoutes.patch('/:id',ensureBodyIsValidMiddleware(updateContatoSchema),ensureEmailExistContatoMiddleware,updateContatoController)
 
-contatoRoutes.get('',ensureTokenIsValidMiddleware,listContatoController)
+contatoRoutes.get('',listContatoController)
 
-contatoRoutes.delete('/:id',ensureTokenIsValidMiddleware,deleteContatoController)
+contatoRoutes.delete('/:id',deleteContatoController)
 
 export default contatoRoutes

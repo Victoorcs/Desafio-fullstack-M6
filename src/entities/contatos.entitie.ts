@@ -1,26 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn ,ManyToOne} from "typeorm"
+import { Column, Entity, PrimaryGeneratedColumn ,ManyToOne, CreateDateColumn} from "typeorm"
 import {User } from "./users.entitie"
 
 
 @Entity("contatos")
 class Contato {
 
-    @PrimaryGeneratedColumn('increment')
-    id: number;
+    @PrimaryGeneratedColumn()
+    id:number
 
-    @Column()
-    name: string;
+    @Column({length:200})
+    name:string
 
-    @Column()
-    email: string;
+    @Column({length: 45,  unique: true })
+    email: string
 
-    @Column()
-    telefone: number;
+    @Column({length: 10 })
+    telefone: string
 
-    @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    dataRegistro: Date;
+    @CreateDateColumn({type:"date"})
+    createdAt: string
 
-    @ManyToOne(() => User, user => user.contatos) 
+    @ManyToOne(() => User, user => user.contatos,{onDelete: 'CASCADE'}) 
     user: User;
 
 }

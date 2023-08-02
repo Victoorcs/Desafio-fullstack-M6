@@ -1,23 +1,42 @@
 import { AppDataSource } from "../data-source"; 
 import { Contato } from "../entities/contatos.entitie";
 import { DeepPartial, Repository } from "typeorm";
-import { TContato, TContatoRequest } from "../interfaces/contato.interface";
-import { contatoSchema } from "../schemas/contato.shema";
+import { TContato, TContatoRequest, TContatoResponse } from "../interfaces/contato.interface";
+import { contatoSchema, contatoSchemaResponse } from "../schemas/contato.shema";
+import { User } from "../entities/users.entitie";
+import { AppError } from "../errors/error";
 
 
 
-const createContatoService = async (contatoData: TContatoRequest): Promise<TContato> => {
-    const userRepository: Repository<Contato> = AppDataSource.getRepository(Contato);
-  
-    
-    const contato: Contato = userRepository.create(contatoData as DeepPartial<Contato>);
-  
-    await userRepository.save(contato);
-  
-    
-    const returnContato: TContato = contatoSchema.parse(contato);
-  
-    return returnContato
+
+
+const createContatoService = async (userId: number, contatoData: TContatoRequest): Promise<TContatoResponse> => {
+  const contatoRepository: Repository<Contato> = AppDataSource.getRepository(Contato)
+  const userRepository: Repository<User> = AppDataSource.getRepository(User)
+
+  const user: User | null = await userRepository.findOneBy({
+    id: userId,
+  })
+
+  if (!user) {
+    throw new AppError('user not found', 404);
   }
-  
-  export default createContatoService
+
+  const contatoWithId  = {
+    ...contatoData,
+    user: user,
+
+  }
+
+  const contato: Contato= contatoRepository.create(contatoWithId)
+
+  await contatoRepository.save(contato);
+
+  const contatoCreate = contatoSchemaResponse.parse(contato)
+
+  return contatoCreate
+}
+
+export default createContatoService
+
+
