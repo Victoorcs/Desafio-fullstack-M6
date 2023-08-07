@@ -29,6 +29,7 @@
     "jsonwebtoken": "^9.0.1",
     "pg": "^8.11.1",
     "pg-format": "^1.0.4",
+    "reflect-metadata": "^0.1.13",
     "typeorm": "^0.3.17",
     "zod": "^3.21.4"
   },

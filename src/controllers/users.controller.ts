@@ -4,6 +4,7 @@ import { TUserRequest, TUserResponse, TUserUpdateRequest } from "../interfaces/u
 import listUsersService from "../services/listUsers.service";
 import updateUserService from "../services/updateUser.service";
 import deleteUserService from "../services/deleteUser.service";
+import listUserService from "../services/listUsers.service";
 
 const createUsersController = async (req:Request, res:Response): Promise<Response> =>{
 
@@ -14,12 +15,12 @@ const createUsersController = async (req:Request, res:Response): Promise<Respons
     return res.status(201).json(newUser)
 }
 
-const listUsersController = async (req:Request,res:Response):Promise<Response> =>{
-
-    const listUsers = await listUsersService()
-
-    return res.status(200).json(listUsers)
-}
+const listUsersController = async (req: Request, res: Response): Promise<void> => {
+    const users = await listUserService();
+  
+    res.status(200).json(users);
+  };
+  
 
 const updateUserController = async (req: Request, res: Response): Promise<Response> => {
     

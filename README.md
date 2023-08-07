@@ -5,6 +5,17 @@ README
 Descrição
 Este repositório contém um projeto simples em Node.js construído com TypeScript utilizando Express e TypeORM. Ele inclui recursos de autenticação com bcryptjs e jsonwebtoken, validação de dados com zod e outras bibliotecas úteis.
 
+
+Comandos backend: 
+npm install    (adicionar bibliotecas instaladas)
+npm run dev  (iniciar na aplicação)
+npm run typeorm migration:generate -- -d src/data-source src/migrations/createUserTable (criar migração)
+npm run typeorm migration:run -- -d src/data-source
+
+Comandos frontend:
+npm install    (adicionar bibliotecas instaladas)
+npm run dev  (iniciar na aplicação)
+
 Bibliotecas Utilizadas
 As seguintes bibliotecas foram utilizadas neste projeto:
 
